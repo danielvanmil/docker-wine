@@ -1,4 +1,4 @@
-FROM maloneweb/docker-wine-base:latest
+FROM danielvanmil/docker-wine-base:latest
 
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG WINE_MONO_VERSION="4.7.3"
@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     wget \
     xvfb \
-    zenity \
+    zenity \    
     # Winetricks and Permissions
     && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
     && chmod +x /usr/local/bin/winetricks \
@@ -37,12 +37,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && winetricks --unattended dotnet20 dotnet40 dotnet_verifier
 
 # Copy Over Wine Prefix
-FROM maloneweb/docker-wine-base:latest
+FROM danielvanmil/docker-wine-base:latest
 
 ENV WINEPREFIX /root/.wine
 ENV WINEARCH win32
 
 RUN mkdir -p /usr/share/wine/mono
+
+RUN alias msbuild='WINEDEBUG=-all wine /root/.wine/drive_c/windows/Microsoft.NET/Framework/v4.0.30319/msbuild.exe'
 
 COPY --from=0 /root/.wine /root/.wine
 COPY --from=0 /tmp/wine-mono /usr/share/wine/mono
