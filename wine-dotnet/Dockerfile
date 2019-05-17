@@ -3,9 +3,6 @@ FROM danielvanmil/docker-wine-base:latest
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG WINE_MONO_VERSION="4.7.3"
 
-# XVFB
-ARG DISPLAY=:0
-
 # Wine
 ARG WINEPREFIX=/root/.wine
 ARG WINEARCH=win32
@@ -33,8 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Install .NET Framework 2.0 and 4.0
     && wine wineboot --init \
     && waitforprocess.sh wineserver \
-    && x11-start.sh \
-    && winetricks --unattended dotnet20 dotnet40 dotnet_verifier
+    && winetricks --unattended dotnet40 dotnet_verifier
 
 # Copy Over Wine Prefix
 FROM danielvanmil/docker-wine-base:latest
