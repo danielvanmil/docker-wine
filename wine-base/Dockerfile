@@ -18,7 +18,7 @@ RUN wget https://dl.winehq.org/wine-builds/Release.key -O - | apt-key add -
 
 RUN wget https://dl.winehq.org/wine-builds/Release.key -O - | apt-key add - \
     && apt-add-repository https://dl.winehq.org/wine-builds/ubuntu \
-    && apt-get update && apt install -y --no-install-recommends winehq-devel \
+    && apt-get update && apt install -y --no-install-recommends winehq-stable \
     && apt-get remove --purge -y $BUILD_DEPENDENCIES \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
