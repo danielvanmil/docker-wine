@@ -3,6 +3,9 @@ FROM danielvanmil/docker-wine-base:latest
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG WINE_MONO_VERSION="4.7.3"
 
+# XVFB
+ARG DISPLAY=:0
+
 # Wine
 ARG WINEPREFIX=/root/.wine
 ARG WINEARCH=win32
@@ -30,7 +33,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Install .NET Framework 2.0 and 4.0
     && wine wineboot --init \
     && waitforprocess.sh wineserver \
-    && winetricks --unattended dotnet40 dotnet_verifier
+    && x11-start.sh \
+    && winetricks --unattended dotnet20 dotnet40 dotnet_verifier
 
 # Copy Over Wine Prefix
 FROM danielvanmil/docker-wine-base:latest
@@ -40,7 +44,7 @@ ENV WINEARCH win32
 
 RUN mkdir -p /usr/share/wine/mono
 
-RUN alias msbuild='WINEDEBUG=-all wine /root/.wine/drive_c/windows/Microsoft.NET/Framework/v4.0.30319/msbuild.exe'
+RUN echo "alias msbuild WINEDEBUG=-all wine /root/.wine/drive_c/windows/Microsoft.NET/Framework/v4.0.30319/msbuild.exe" >> ~/.bash_profile
 
 COPY --from=0 /root/.wine /root/.wine
 COPY --from=0 /tmp/wine-mono /usr/share/wine/mono
